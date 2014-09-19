@@ -8,8 +8,11 @@ module.exports = function(app) {
     // Import twitter and blog cron job helpers.
     var news      = require('../cron/news');
 
-    // Impor NewsItem model.
+    // Import NewsItem model.
     var NewsItem  = require('../models/news_item');
+
+    // Utilities
+    var newsUtils = require('./news-utils.js');
 
     // Set up a route for our cron job; it will run with a curl command.
     app.get('/cron', function(req, res) {
@@ -28,7 +31,6 @@ module.exports = function(app) {
     // Show the newest news stories.
     app.get('/api/v1/news/:start', function(req, res) {
 
-        //
         var start = req.params.start;
         NewsItem.findAll(start, function(doc) {
 
@@ -41,10 +43,15 @@ module.exports = function(app) {
                 responseObject["next_page"] = '/api/v1/news/' + nextStart;
             }
 
-
             res.json(responseObject);
         })
+    });
 
+    // Show the newest news stories.
+    app.get('/api/v1/topnews', function(req, res) {
+
+        // Send response object to utility to delegate it for handling response.
+        var top = newsUtils.getTopStories(res);
     });
 
     app.get('/api/v1/news/search/:search', function(req, res) {
@@ -60,7 +67,6 @@ module.exports = function(app) {
 
           res.json(responseObject);
         })
-
     });
 
 };

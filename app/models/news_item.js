@@ -39,15 +39,28 @@ var NewsItem = function() {
     };
 
     // Find all items.  Accept start param for pagination.
-    var _findAll = function(start, callback) {
-
-        _model.find({}, {__v: 0}, {sort: {date: -1}, skip: start, limit: 20},
+    var _findAll = function(start, callback, limit) {
+        limit = limit || 20
+        _model.find({}, {__v: 0}, {sort: {date: -1}, skip: start, limit: limit},
             function(err, doc) {
 
             if(err) {
                 console.log(err);
             } else {
                 doc.start = start;
+                callback(doc);
+            }
+        });
+    };
+
+    // Basic find - accepts all the params as arguments for greater customization.
+    var _simpleFind = function(searchObj, exclude, filters, callback, fail) {
+
+        _model.find(searchObj, exclude, filters, function(err, doc) {
+
+            if(err) {
+                fail(err);
+            } else {
                 callback(doc);
             }
         });
@@ -84,6 +97,7 @@ var NewsItem = function() {
         createNew: _createNew,
         findAll: _findAll,
         findByTitle: _findByTitle,
+        simpleFind: _simpleFind,
         schema: _schemaModel,
         searchTitleForString: _searchTitleForString,
         model: _model

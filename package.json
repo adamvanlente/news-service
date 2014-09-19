@@ -5,19 +5,16 @@
   "main": "update-server.js",
   "dependencies": {
     "express": "~4.0.0",
-    "mongoose": "3.0.x",
     "feed-read": "0.0.1",
+    "mongoose": "3.0.x",
     "should": "1.1.x"
   },
-
   "devDependencies": {
     "mocha": "1.3.x"
   },
-
   "scripts": {
     "test": "mocha"
   },
-
   "engines": {
     "node": "v0.8.x"
   }
