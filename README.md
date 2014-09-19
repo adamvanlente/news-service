@@ -66,6 +66,13 @@ The app has two endpoints baked in currently.
 			"votes": "0"
 		}]
 
+###### top news stories
+
+	// Paginated news stories, newest to oldest.
+	/api/v1/topnews
+
+	// Result is same format as above, non paginated.
+
 
 ### setup
 
