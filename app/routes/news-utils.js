@@ -27,7 +27,7 @@ var articleHelper = {
     sampleSet                   : 1000,
 
     // How many times must a word be found to be considered a top word?
-    topWordThreshold            : 5,
+    topWordThreshold            : 15,
 
     // How many top keywords must occur in an article title to make it relevant?
     // Eg if 3, and [new, album, out] are words, it will bring back all titles
@@ -138,34 +138,55 @@ function countAndSortTopWords(articles, res) {
 // and how many top words were found within it.
 function countTopWordsInHeadlines(articles, res) {
 
+    // This holds all the articles we want to remember.
+    var results = [];
+
+    // Hold titles, urls and word groups to avoid duplicate articles.
+    var titleHolder = [];
+    var urlHolder = [];
+    var wordGroupHolder = [];
+
     for (var i = 0; i < articles.length; i++) {
         var article             = articles[i];
         var title               = article.title;
 
-        var countedItem         = {};
-        countedItem.article     = article;
-        countedItem.wordsFound  = [];
+        // Which top words were found in the article title.
+        var wordsFound  = [];
 
         for (var j = 0; j < articleHelper.topWords.length; j++) {
             var topWord         = articleHelper.topWords[j];
             var wordInHeadline  = title.indexOf(topWord) != -1;
             if (wordInHeadline) {
-                countedItem.wordsFound.push(topWord);
+                wordsFound.push(topWord);
             }
         }
+
+        var wordGroupString = wordsFound.join(' ');
 
         // This is part 2/2 of our popularity meter.  It asks how many top keywords
         // need to appear in a headline to qualify it for our popular feed. If it
         // meets the criteria, it is added to the list.
-        if (countedItem.wordsFound.length > articleHelper.wordOccurenceThreshold) {
-            articleHelper.headlineAndWordOccurences.push(countedItem);
+        var meetsWordThreshold =
+            wordsFound.length > articleHelper.wordOccurenceThreshold
+        var isNew = titleHolder.indexOf(title) == -1 &&
+            urlHolder.indexOf(article.source_url) == -1 &&
+            wordGroupHolder.indexOf(wordGroupString == -1);
+
+        // If the article is actually considered popular, and if it is not
+        // already recorded as popular, make it so!
+        if (meetsWordThreshold && isNew) {
+
+            results.push(article);
+            titleHolder.push(title);
+            urlHolder.push(article.source_url);
+            wordGroupHolder.push(wordGroupString);
         }
     }
 
     // Render response of popular items.
     var response        = {}
-    response.count      = articleHelper.headlineAndWordOccurences.length
-    response.results    = articleHelper.headlineAndWordOccurences;
+    response.count      = results.length
+    response.results    = results;
     res.json(response);
 }
 
