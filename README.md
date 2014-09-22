@@ -107,4 +107,4 @@ The app has two endpoints baked in currently.
 
 update <b>/config/database-sample.js</b> and rename to <b>/config/database.js</b>
 
-update <b>/config/feed-list-sample.js</b> and rename to <b>/config/feed-list-sample</b>
+update <b>/config/feed-list-sample.js</b> and rename to <b>/config/feed-list.js</b>
